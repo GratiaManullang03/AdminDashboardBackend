@@ -1,8 +1,11 @@
 {
 	"deploy": {
-	  "startCommand": "GIN_MODE=debug ./main",
-	  "restartPolicyType": "always",
-	  "healthcheckPath": "/health",
-	  "healthcheckTimeout": 10
+		"startCommand": "./main",
+		"restartPolicyType": "always",
+		"healthcheckPath": "/health",
+		"healthcheckTimeout": 10
+	},
+	"build": {
+		"builder": "nixpacks"
 	}
-  }
+}
