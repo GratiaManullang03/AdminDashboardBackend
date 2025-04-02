@@ -1,6 +1,6 @@
 module admin-dashboard
 
-go 1.24.1
+go 1.21
 
 require (
 	github.com/bytedance/sonic v1.13.2 // indirect
