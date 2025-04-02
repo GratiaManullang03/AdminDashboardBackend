@@ -97,5 +97,7 @@ func main() {
 	// if err := router.Run(serverAddr); err != nil {
 	// 	log.Fatalf("Failed to start server: %v", err)
 	// }
+
+	router.SetTrustedProxies([]string{"0.0.0.0/0", "::/0"})
 	router.Run(":" + cfg.Server.Port) // This binds to all interfaces, IPv4 and IPv6
 }
