@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	"log"
 
 	"admin-dashboard/internal/config"
@@ -92,9 +92,10 @@ func main() {
 	})
 
 	// Start the server
-	serverAddr := fmt.Sprintf("%s:%s", cfg.Server.Host, cfg.Server.Port)
-	log.Printf("Server is running on %s", serverAddr)
-	if err := router.Run(serverAddr); err != nil {
-		log.Fatalf("Failed to start server: %v", err)
-	}
+	// serverAddr := fmt.Sprintf("%s:%s", cfg.Server.Host, cfg.Server.Port)
+	// log.Printf("Server is running on %s", serverAddr)
+	// if err := router.Run(serverAddr); err != nil {
+	// 	log.Fatalf("Failed to start server: %v", err)
+	// }
+	router.Run(":" + cfg.Server.Port) // This binds to all interfaces, IPv4 and IPv6
 }
