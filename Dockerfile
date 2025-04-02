@@ -9,8 +9,6 @@ FROM debian:bullseye-slim
 WORKDIR /app
 COPY --from=builder /app/main .
 
-RUN go mod download && go build -o main ./cmd/api/main.go
-
 # Install CA certificates for HTTPS connections
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
