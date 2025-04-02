@@ -10,7 +10,7 @@ WORKDIR /app
 COPY --from=builder /app/main .
 
 # Install CA certificates for HTTPS connections
-RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' -o main ./cmd/api/main.go
 
 EXPOSE 8080
 CMD ["./main"]
