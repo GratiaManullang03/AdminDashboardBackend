@@ -75,7 +75,7 @@ func LoadConfig() (*Config, error) {
 	// Server config
 	serverConfig := ServerConfig{
 		Host: getEnv("SERVER_HOST", "0.0.0.0"),
-		Port: getEnv("SERVER_PORT", "8080"),
+		Port: getEnv("SERVER_PORT", "3000"),
 	}
 
 	config := &Config{
