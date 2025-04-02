@@ -22,5 +22,5 @@ COPY --from=builder /app/main .
 # Install CA certificates for HTTPS connections
 RUN apk --no-cache add ca-certificates
 
-EXPOSE 8080
+EXPOSE 3000
 CMD ["./main"]
