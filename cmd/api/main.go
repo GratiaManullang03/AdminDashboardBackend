@@ -86,9 +86,7 @@ func main() {
 
 	// Add health check endpoint
 	router.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"status": "ok",
-		})
+		c.String(200, "OK")
 	})
 
 	// Start the server
