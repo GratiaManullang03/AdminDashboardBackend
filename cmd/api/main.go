@@ -1,0 +1,100 @@
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"admin-dashboard/internal/config"
+	"admin-dashboard/internal/handlers"
+	"admin-dashboard/internal/middleware"
+	"admin-dashboard/internal/repository"
+	"admin-dashboard/internal/services"
+	"admin-dashboard/internal/utils"
+
+	"github.com/gin-gonic/gin"
+)
+
+func main() {
+	// Load configuration
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
+
+	// Create database connection
+	db, err := config.NewDatabase(cfg)
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+
+	// Run migrations
+	err = db.Migrate()
+	if err != nil {
+		log.Fatalf("Failed to run migrations: %v", err)
+	}
+
+	// Initialize JWT manager
+	jwtManager := utils.NewJWTManager(&cfg.JWTConfig)
+
+	// Initialize repositories
+	userRepo := repository.NewUserRepository(db.DB)
+	roleRepo := repository.NewRoleRepository(db.DB)
+	divisionRepo := repository.NewDivisionRepository(db.DB)
+	positionRepo := repository.NewPositionRepository(db.DB)
+
+	// Initialize services
+	authService := services.NewAuthService(userRepo, roleRepo, jwtManager)
+	userService := services.NewUserService(userRepo, roleRepo, divisionRepo, positionRepo)
+	roleService := services.NewRoleService(roleRepo)
+	divisionService := services.NewDivisionService(divisionRepo)
+	positionService := services.NewPositionService(positionRepo)
+	dashboardService := services.NewDashboardService(db.DB)
+
+	// Initialize handlers
+	authHandler := handlers.NewAuthHandler(authService)
+	userHandler := handlers.NewUserHandler(userService)
+	roleHandler := handlers.NewRoleHandler(roleService)
+	divisionHandler := handlers.NewDivisionHandler(divisionService)
+	positionHandler := handlers.NewPositionHandler(positionService)
+	dashboardHandler := handlers.NewDashboardHandler(dashboardService)
+
+	// Initialize middleware
+	authMiddleware := middleware.NewAuthMiddleware(jwtManager)
+	authenticate := authMiddleware.Authenticate()
+
+	// Set up Gin router
+	router := gin.Default()
+
+	// Apply global middleware
+	router.Use(middleware.CORS())
+	router.Use(middleware.Logger())
+	router.Use(middleware.ErrorHandler())
+
+	// API routes
+	api := router.Group("/api")
+	{
+		// Auth routes dengan middleware untuk profile
+		authHandler.RegisterRoutes(api, &authenticate)
+
+		// Protected routes (authentication required)
+		userHandler.RegisterRoutes(api, &authenticate)
+		roleHandler.RegisterRoutes(api, &authenticate)
+		divisionHandler.RegisterRoutes(api, &authenticate)
+		positionHandler.RegisterRoutes(api, &authenticate)
+		dashboardHandler.RegisterRoutes(api, &authenticate)
+	}
+
+	// Add health check endpoint
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status": "ok",
+		})
+	})
+
+	// Start the server
+	serverAddr := fmt.Sprintf("%s:%s", cfg.Server.Host, cfg.Server.Port)
+	log.Printf("Server is running on %s", serverAddr)
+	if err := router.Run(serverAddr); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
+}
