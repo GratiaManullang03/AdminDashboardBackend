@@ -1,0 +1,8 @@
+{
+	"deploy": {
+	  "startCommand": "GIN_MODE=debug ./main",
+	  "restartPolicyType": "always",
+	  "healthcheckPath": "/health",
+	  "healthcheckTimeout": 10
+	}
+  }

@@ -3,6 +3,7 @@ package main
 import (
 	// "fmt"
 	"log"
+	"os"
 
 	"admin-dashboard/internal/config"
 	"admin-dashboard/internal/handlers"
@@ -96,6 +97,19 @@ func main() {
 	// 	log.Fatalf("Failed to start server: %v", err)
 	// }
 
-	router.SetTrustedProxies([]string{"0.0.0.0/0", "::/0"})
-	router.Run(":" + cfg.Server.Port) // This binds to all interfaces, IPv4 and IPv6
+	// router.SetTrustedProxies([]string{"0.0.0.0/0", "::/0"})
+	// router.Run(":" + cfg.Server.Port) // This binds to all interfaces, IPv4 and IPv6
+
+	// Add right before router.Run
+	envs := os.Environ()
+	log.Println("Environment variables:")
+	for _, env := range envs {
+		log.Println(env)
+	}
+	log.Println("Attempting to start HTTP server...")
+
+	log.Printf("Starting server with explicit binding to 0.0.0.0:3000")
+	if err := router.Run("0.0.0.0:3000"); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
 }
