@@ -9,18 +9,25 @@ RUN go mod download
 # Copy the rest of the code
 COPY . .
 
-# Build statically linked binary in the BUILD stage
+# Build statically linked binary
 RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' -o main ./cmd/api/main.go
 
-# Run stage (Alpine is smaller and works well with statically linked Go binaries)
+# Run stage
 FROM alpine:latest
 WORKDIR /app
 
-# Just copy the compiled binary from the build stage
+# Copy the binary
 COPY --from=builder /app/main .
 
-# Install CA certificates for HTTPS connections
+# Install CA certificates
 RUN apk --no-cache add ca-certificates
 
+# Set environment variables
+ENV GIN_MODE=debug
+ENV PORT=3000
+
+# Expose the port
 EXPOSE 3000
+
+# Command to run
 CMD ["./main"]
