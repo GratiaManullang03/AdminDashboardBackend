@@ -47,17 +47,20 @@ func (s *DashboardService) GetStatistics() (*models.Statistics, error) {
 	// Get users per division
 	var usersPerDivision []struct {
 		DivisionName string
-		UserCount    int64
+		UserCount int64
 	}
-	
-	if err := s.db.Table("users").
-		Select("divisions.div_name as division_name, COUNT(users.u_id) as user_count").
-		Joins("JOIN divisions ON users.u_division_id = divisions.div_id").
-		Where("users.u_is_active = ?", true).
-		Group("divisions.div_name").
-		Scan(&usersPerDivision).Error; err != nil {
-		return nil, err
-	}
+
+	divisionQuery := `
+        SELECT d.div_name as division_name, COUNT(u.u_id) as user_count 
+        FROM "user".users u 
+        JOIN "user".divisions d ON u.u_division_id = d.div_id 
+        WHERE u.u_is_active = true 
+        GROUP BY d.div_name
+    `
+    
+    if err := s.db.Raw(divisionQuery).Scan(&usersPerDivision).Error; err != nil {
+        return nil, err
+    }
 	
 	// Convert to map for response
 	stats.UsersPerDivision = make([]map[string]interface{}, len(usersPerDivision))
@@ -74,14 +77,17 @@ func (s *DashboardService) GetStatistics() (*models.Statistics, error) {
 		UserCount    int64
 	}
 	
-	if err := s.db.Table("users").
-		Select("positions.pos_name as position_name, COUNT(users.u_id) as user_count").
-		Joins("JOIN positions ON users.u_position_id = positions.pos_id").
-		Where("users.u_is_active = ?", true).
-		Group("positions.pos_name").
-		Scan(&usersPerPosition).Error; err != nil {
-		return nil, err
-	}
+	positionQuery := `
+        SELECT p.pos_name as position_name, COUNT(u.u_id) as user_count 
+        FROM "user".users u 
+        JOIN "user".positions p ON u.u_position_id = p.pos_id 
+        WHERE u.u_is_active = true 
+        GROUP BY p.pos_name
+    `
+    
+    if err := s.db.Raw(positionQuery).Scan(&usersPerPosition).Error; err != nil {
+        return nil, err
+    }
 	
 	// Convert to map for response
 	stats.UsersPerPosition = make([]map[string]interface{}, len(usersPerPosition))
