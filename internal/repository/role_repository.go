@@ -144,16 +144,17 @@ func (r *RoleRepository) ListAll() ([]models.Role, error) {
 
 // GetUserRoles gets all roles for a user
 func (r *RoleRepository) GetUserRoles(userID uint) ([]models.Role, error) {
-	var roles []models.Role
-	
-	err := r.db.Table("roles").
-		Joins("JOIN user_roles ON roles.role_id = user_roles.ur_role_id").
-		Where("user_roles.ur_user_id = ?", userID).
-		Find(&roles).Error
-	
-	if err != nil {
-		return nil, err
-	}
-	
-	return roles, nil
+    var roles []models.Role
+    // Gunakan Raw SQL untuk menghindari masalah dengan schema
+    query := `
+        SELECT r.* 
+        FROM "user".roles r
+        JOIN "user".user_roles ur ON r.role_id = ur.ur_role_id
+        WHERE ur.ur_user_id = ?
+    `
+    err := r.db.Raw(query, userID).Scan(&roles).Error
+    if err != nil {
+        return nil, err
+    }
+    return roles, nil
 }

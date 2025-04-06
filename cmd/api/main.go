@@ -42,10 +42,10 @@ func main() {
 
 	// Run migrations
 	log.Println("Running database migrations...")
-	err = db.Migrate()
-	if err != nil {
-		log.Fatalf("Failed to run migrations: %v", err)
-	}
+	// err = db.Migrate()
+	// if err != nil {
+	// 	log.Fatalf("Failed to run migrations: %v", err)
+	// }
 
 	log.Println("Initializing application components...")
 	// Initialize JWT manager

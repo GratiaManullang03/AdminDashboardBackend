@@ -20,7 +20,7 @@ type Division struct {
 
 // TableName overrides the table name
 func (Division) TableName() string {
-	return "user.divisions"
+	return "\"user\".divisions"
 }
 
 // Position represents the positions table
@@ -37,7 +37,7 @@ type Position struct {
 
 // TableName overrides the table name
 func (Position) TableName() string {
-	return "user.positions"
+	return "\"user\".positions"
 }
 
 // Role represents the roles table
@@ -56,7 +56,7 @@ type Role struct {
 
 // TableName overrides the table name
 func (Role) TableName() string {
-	return "user.roles"
+	return "\"user\".roles"
 }
 
 // User represents the users table
@@ -92,7 +92,7 @@ type User struct {
 
 // TableName overrides the table name
 func (User) TableName() string {
-	return "user.users"
+	return "\"user\".users"
 }
 
 // UserRole represents the user_roles table (many-to-many relationship)
@@ -196,7 +196,7 @@ type PositionRequest struct {
 // RoleRequest represents payload for creating/updating role
 type RoleRequest struct {
 	Name  string `json:"name" binding:"required"`
-	Level int    `json:"level" binding:"required"`
+	Level int    `json:"level"`
 }
 
 // PaginatedResponse represents a paginated response
