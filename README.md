@@ -272,3 +272,20 @@ POST /api/positions
   "name": "Technician"
 }
 ```
+
+
+## Kontribusi
+
+Kontribusi untuk meningkatkan proyek ini sangat diterima. Silakan fork repositori, buat perubahan, dan kirimkan pull request.
+
+## Lisensi
+
+[MIT License](LICENSE)
+
+## Kontak
+
+Jika Anda memiliki pertanyaan, silakan buka issue di repositori ini atau hubungi pengembang di [gratiamanullang03@gmail.com](mailto:gratiamanullang03@gmail.com).
+
+---
+
+&copy; 2025 Admin Dashboard Laravel. Dibuat dengan 💻 dan ❤️
